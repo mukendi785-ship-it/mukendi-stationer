@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Mfumo wa Mauzo - Duka la Nguo</title>
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<header class="topbar">
+  <h1>Duka la Nguo &mdash; Mfumo wa Mauzo</h1>
+  <nav class="tabs">
+    <button class="tab active" data-tab="pos">Mauzo</button>
+    <button class="tab" data-tab="products">Bidhaa</button>
+    <button class="tab" data-tab="sales">Historia</button>
+    <button class="tab" data-tab="reports">Ripoti</button>
+  </nav>
+</header>
+
+<main>
+  <!-- POS -->
+  <section id="pos" class="panel active">
+    <div class="pos-grid">
+      <div class="catalog">
+        <div class="toolbar">
+          <input type="search" id="posSearch" placeholder="Tafuta jina, aina au saizi..." />
+          <select id="posCategory"><option value="">Aina zote</option></select>
+        </div>
+        <div id="posProducts" class="product-grid"></div>
+      </div>
+      <aside class="cart">
+        <h2>Kikapu cha Mauzo</h2>
+        <div id="cartItems" class="cart-items"></div>
+        <div class="cart-summary">
+          <div class="row"><span>Jumla ndogo</span><strong id="subTotal">0</strong></div>
+          <div class="row">
+            <label for="discount">Punguzo (%)</label>
+            <input type="number" id="discount" min="0" max="100" value="0" />
+          </div>
+          <div class="row big"><span>JUMLA</span><strong id="grandTotal">0</strong></div>
+          <div class="row">
+            <label for="payMethod">Malipo</label>
+            <select id="payMethod">
+              <option value="Pesa Taslimu">Pesa Taslimu</option>
+              <option value="M-Pesa">M-Pesa</option>
+              <option value="Kadi">Kadi</option>
+              <option value="Deni">Deni</option>
+            </select>
+          </div>
+          <div class="row">
+            <label for="customer">Mteja (hiari)</label>
+            <input type="text" id="customer" placeholder="Jina la mteja" />
+          </div>
+          <div class="actions">
+            <button id="clearCart" class="btn ghost">Futa</button>
+            <button id="checkout" class="btn primary">Kamilisha Mauzo</button>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- PRODUCTS -->
+  <section id="products" class="panel">
+    <div class="toolbar">
+      <h2>Orodha ya Bidhaa</h2>
+      <div class="spacer"></div>
+      <input type="search" id="prodSearch" placeholder="Tafuta bidhaa..." />
+      <button id="addProduct" class="btn primary">+ Ongeza Bidhaa</button>
+      <button id="exportData" class="btn ghost">Hifadhi nakala</button>
+      <button id="importData" class="btn ghost">Leta nakala</button>
+      <input type="file" id="importFile" accept="application/json" hidden />
+    </div>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Jina</th>
+          <th>Aina</th>
+          <th>Saizi</th>
+          <th>Rangi</th>
+          <th>Bei</th>
+          <th>Gharama</th>
+          <th>Stoo</th>
+          <th>Vitendo</th>
+        </tr>
+      </thead>
+      <tbody id="productsBody"></tbody>
+    </table>
+  </section>
+
+  <!-- SALES HISTORY -->
+  <section id="sales" class="panel">
+    <div class="toolbar">
+      <h2>Historia ya Mauzo</h2>
+      <div class="spacer"></div>
+      <input type="date" id="fromDate" />
+      <input type="date" id="toDate" />
+      <button id="filterSales" class="btn ghost">Chuja</button>
+    </div>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Tarehe</th>
+          <th>Risiti</th>
+          <th>Mteja</th>
+          <th>Bidhaa</th>
+          <th>Malipo</th>
+          <th>Jumla</th>
+          <th>Vitendo</th>
+        </tr>
+      </thead>
+      <tbody id="salesBody"></tbody>
+    </table>
+  </section>
+
+  <!-- REPORTS -->
+  <section id="reports" class="panel">
+    <h2>Muhtasari wa Biashara</h2>
+    <div class="cards">
+      <div class="card"><span>Mauzo leo</span><strong id="rToday">0</strong></div>
+      <div class="card"><span>Mauzo wiki hii</span><strong id="rWeek">0</strong></div>
+      <div class="card"><span>Mauzo mwezi huu</span><strong id="rMonth">0</strong></div>
+      <div class="card"><span>Faida (kadirio)</span><strong id="rProfit">0</strong></div>
+      <div class="card"><span>Bidhaa zenye stoo ndogo</span><strong id="rLowStock">0</strong></div>
+      <div class="card"><span>Bidhaa zote</span><strong id="rProducts">0</strong></div>
+    </div>
+    <h3>Bidhaa zinazouzwa zaidi</h3>
+    <table class="data-table">
+      <thead><tr><th>Bidhaa</th><th>Idadi iliyouzwa</th><th>Mapato</th></tr></thead>
+      <tbody id="topProducts"></tbody>
+    </table>
+    <h3>Bidhaa zenye stoo chini ya 5</h3>
+    <table class="data-table">
+      <thead><tr><th>Bidhaa</th><th>Saizi</th><th>Rangi</th><th>Stoo</th></tr></thead>
+      <tbody id="lowStockBody"></tbody>
+    </table>
+  </section>
+</main>
+
+<!-- Product modal -->
+<div id="productModal" class="modal hidden">
+  <div class="modal-card">
+    <h3 id="modalTitle">Ongeza Bidhaa</h3>
+    <form id="productForm">
+      <input type="hidden" id="pId" />
+      <label>Jina<input type="text" id="pName" required /></label>
+      <label>Aina
+        <input type="text" id="pCategory" list="categoryList" placeholder="k.m. Shati, Suruali, Gauni" required />
+        <datalist id="categoryList"></datalist>
+      </label>
+      <div class="grid2">
+        <label>Saizi<input type="text" id="pSize" placeholder="S, M, L, 32, 40..." /></label>
+        <label>Rangi<input type="text" id="pColor" placeholder="Nyeusi, Bluu..." /></label>
+      </div>
+      <div class="grid2">
+        <label>Bei ya kuuza (KSh)<input type="number" id="pPrice" min="0" step="1" required /></label>
+        <label>Gharama (KSh)<input type="number" id="pCost" min="0" step="1" value="0" /></label>
+      </div>
+      <label>Idadi kwenye stoo<input type="number" id="pStock" min="0" step="1" value="0" required /></label>
+      <div class="modal-actions">
+        <button type="button" class="btn ghost" id="cancelProduct">Ghairi</button>
+        <button type="submit" class="btn primary">Hifadhi</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Receipt modal -->
+<div id="receiptModal" class="modal hidden">
+  <div class="modal-card">
+    <div id="receipt" class="receipt"></div>
+    <div class="modal-actions">
+      <button type="button" class="btn ghost" id="closeReceipt">Funga</button>
+      <button type="button" class="btn primary" id="printReceipt">Chapisha</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast hidden"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
